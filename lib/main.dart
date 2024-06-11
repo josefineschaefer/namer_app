@@ -17,10 +17,11 @@ class MyApp extends StatelessWidget {
         title: 'Namer App',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 219, 129, 216),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Color.fromARGB(255, 219, 129, 216),
+          ),
         ),
-         ),
-          home: MyHomePage(),
+        home: MyHomePage(),
       ),
     );
   }
@@ -33,7 +34,8 @@ class MyAppState extends ChangeNotifier {
     current = WordPair.random();
     notifyListeners();
   }
-    var favorites = <WordPair>[];
+
+  var favorites = <WordPair>[];
 
   void toggleFavorite() {
     if (favorites.contains(current)) {
@@ -51,9 +53,31 @@ class MyAppState extends ChangeNotifier {
 
 // ...
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+// ...
+
+// ...
+
+class _MyHomePageState extends State<MyHomePage> {
+  var selectedIndex = 0; 
+
   @override
   Widget build(BuildContext context) {
+    Widget page;
+    switch (selectedIndex) {
+      case 0:
+        page = GeneratorPage();
+        break;
+      case 1:
+        page = Placeholder();
+        break;
+      default:
+        throw UnimplementedError('no widget for $selectedIndex');
+    }
     return Scaffold(
       body: Row(
         children: [
@@ -70,16 +94,18 @@ class MyHomePage extends StatelessWidget {
                   label: Text('Favorites'),
                 ),
               ],
-              selectedIndex: 0,
+              selectedIndex: selectedIndex,
               onDestinationSelected: (value) {
-                print('selected: $value');
+                setState(() {
+                  selectedIndex = value;
+                });
               },
             ),
           ),
           Expanded(
             child: Container(
               color: Theme.of(context).colorScheme.primaryContainer,
-              child: GeneratorPage(),
+              child: page,
             ),
           ),
         ],
@@ -88,6 +114,8 @@ class MyHomePage extends StatelessWidget {
   }
 }
 
+// ...
+// ...
 
 class GeneratorPage extends StatelessWidget {
   @override
@@ -154,9 +182,8 @@ class BigCard extends StatelessWidget {
       color: theme.colorScheme.primary,
       child: Padding(
         padding: const EdgeInsets.all(20),
-        child: Text(
-          pair.asLowerCase, style: style,semanticsLabel:pair.asPascalCase),
-  
+        child: Text(pair.asLowerCase,
+            style: style, semanticsLabel: pair.asPascalCase),
       ),
     );
   }
